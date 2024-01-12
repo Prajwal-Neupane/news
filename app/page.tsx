@@ -1,5 +1,11 @@
+import Categories from "@/components/Categories";
 import Image from "next/image";
 
 export default function Home() {
-  return <div></div>;
+  return (
+    <div>
+      <Categories />
+      <div>Posts</div>
+    </div>
+  );
 }
