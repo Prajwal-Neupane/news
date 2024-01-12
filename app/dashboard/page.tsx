@@ -1,12 +1,11 @@
-import Categories from "@/components/Categories";
-import Post from "@/components/Post";
-import Image from "next/image";
+import React from "react";
 import { postData } from "@/postData";
+import Post from "@/components/Post";
 
-export default function Home() {
+const Dashboard = () => {
   return (
     <div>
-      <Categories />
+      <h1 className="text-center font-bold text-2xl">My Posts</h1>
       <div className="mt-8 flex flex-col flex-wrap gap-6">
         {postData && postData.length > 0 ? (
           postData.map((post) => (
@@ -23,9 +22,13 @@ export default function Home() {
             />
           ))
         ) : (
-          <div> No Data Available</div>
+          <div>
+            <h1>No Post Available</h1>
+          </div>
         )}
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;

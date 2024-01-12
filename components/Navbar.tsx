@@ -18,7 +18,7 @@ const Navbar = () => {
       </div>
       <div>
         <Link href={"/login"}>
-          <button className="btn">Login</button>
+          <button className="btn md:text-xl">Login</button>
         </Link>
       </div>
     </div>

@@ -26,7 +26,7 @@ const Categories = () => {
       {categoriesList.map((category) => {
         return (
           <Link
-            className="btn"
+            className="btn md:text-xl"
             href={`/categories/${category.name}`}
             key={category.id}
           >
