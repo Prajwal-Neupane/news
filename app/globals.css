@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    @apply bg-gray-100
+}
+
 .btn {
     @apply   bg-dark hover:bg-light  text-white px-4 py-2 rounded-md hover:scale-105 transition-all duration-300
 }

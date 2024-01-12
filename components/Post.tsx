@@ -27,7 +27,7 @@ const Post = ({
 }: PostProps) => {
   const loggedIn = true;
   return (
-    <div className=" border-b-2 pb-4 border-black">
+    <div className=" border-b-2 pb-4 border-black ">
       <div>
         <p className="text-xl">
           Posted by: <span className="font-bold">{author}</span> on{" "}
