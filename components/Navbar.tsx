@@ -1,7 +1,10 @@
+"use client";
 import Link from "next/link";
 import React from "react";
+import { useSession, signOut } from "next-auth/react";
 
 const Navbar = () => {
+  const { status } = useSession();
   return (
     <div className="flex justify-between border-b pb-4 mb-4">
       <div className="flex flex-col gap-4">
@@ -17,9 +20,15 @@ const Navbar = () => {
         </p>
       </div>
       <div>
-        <Link href={"/login"}>
-          <button className="btn md:text-xl">Login</button>
-        </Link>
+        {status === "authenticated" ? (
+          <button onClick={() => signOut()} className="btn md:text-xl">
+            Sign Out
+          </button>
+        ) : (
+          <Link href={"/login"}>
+            <button className="btn md:text-xl">Login</button>
+          </Link>
+        )}
       </div>
     </div>
   );
