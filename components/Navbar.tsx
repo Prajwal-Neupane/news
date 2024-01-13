@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -9,8 +9,22 @@ import Image from "next/image";
 import { IoAddCircle } from "react-icons/io5";
 
 const Navbar = () => {
+  const popUpRef = useRef<HTMLDivElement | null>(null);
   const { status, data: session } = useSession();
   const [popUp, setPopUp] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popUpRef.current && !popUpRef.current.contains(e.target as Node)) {
+        setPopUp(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    if (!popUp) {
+      document.removeEventListener("click", handleClickOutside);
+    }
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [popUp]);
 
   return (
     <div className="flex justify-between border-b pb-4 mb-4 relative">
@@ -31,7 +45,7 @@ const Navbar = () => {
           <div className="flex items-center gap-8">
             <Link
               href={"/create-post"}
-              className="flex gap-2 bg-green-700 px-2 py-2 rounded-lg items-center"
+              className="flex gap-2 bg-green-700 hover:bg-slate-900 transition-all duration-300 px-2 py-2 rounded-lg items-center"
             >
               <IoAddCircle size={20} color="white" />
               <p className="font-semibold text-white">Create</p>
@@ -45,7 +59,10 @@ const Navbar = () => {
               alt="userImage"
             />
             {popUp && (
-              <div className="absolute z-30 right-0 top-16 flex flex-col  text-right bg-green-400 px-3 py-4 rounded-md transition-all duration-300 shadow-2xl">
+              <div
+                ref={popUpRef}
+                className="absolute z-30 right-0 top-16 flex flex-col  text-right bg-green-400 px-3 py-4 rounded-md transition-all duration-300 shadow-2xl"
+              >
                 <h1 className="text-dark text-xl font-semibold">
                   {session?.user?.name}
                 </h1>
