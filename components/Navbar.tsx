@@ -2,9 +2,13 @@
 import Link from "next/link";
 import React from "react";
 import { useSession, signOut } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 const Navbar = () => {
   const { status } = useSession();
+
   return (
     <div className="flex justify-between border-b pb-4 mb-4">
       <div className="flex flex-col gap-4">
@@ -21,9 +25,11 @@ const Navbar = () => {
       </div>
       <div>
         {status === "authenticated" ? (
-          <button onClick={() => signOut()} className="btn md:text-xl">
-            Sign Out
-          </button>
+          <div>
+            <button onClick={() => signOut()} className="btn md:text-xl">
+              Sign Out
+            </button>
+          </div>
         ) : (
           <Link href={"/login"}>
             <button className="btn md:text-xl">Login</button>
