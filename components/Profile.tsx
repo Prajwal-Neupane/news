@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 const Profile = async () => {
   const session = await getServerSession(authOptions);
+  console.log(session);
   return <div>Profile</div>;
 };
 
