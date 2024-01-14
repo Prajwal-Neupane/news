@@ -32,3 +32,19 @@ export const POST = async (req: Request) => {
     );
   }
 };
+
+export const GET = async (req: Request) => {
+  try {
+    const posts = await prisma.post.findMany({
+      include: { author: { select: { name: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json(posts, { status: 200 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: "Error fetching all posts" },
+      { status: 500 }
+    );
+  }
+};
