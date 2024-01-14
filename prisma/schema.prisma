@@ -58,19 +58,19 @@ model VerificationToken {
 }
 
 model Post {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  content     String
-  imageUrl    String?
-  publicId    String?
-  catName     String?
-  category    Category? @relation(fields: [catName], references: [catName])
-  categoryId  String    @db.ObjectId
-  author      User      @relation(fields: [authorEmail], references: [email])
-  userId      String    @db.ObjectId
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  content  String
+  imageUrl String?
+  publicId String?
+  catName  String?
+  category Category? @relation(fields: [catName], references: [catName])
+
+  author User @relation(fields: [authorEmail], references: [email])
+
   links       String[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   authorEmail String
 }
 
