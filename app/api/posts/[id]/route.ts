@@ -48,3 +48,16 @@ export const PUT = async (
     return NextResponse.json({ message: "Failed to update post" });
   }
 };
+
+export const DELETE = async (
+  req: Request,
+  { params }: { params: { id: string } }
+) => {
+  try {
+    const response = await prisma.post.delete({ where: { id: params.id } });
+    return NextResponse.json(response);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ message: "Failed to delete post" });
+  }
+};
