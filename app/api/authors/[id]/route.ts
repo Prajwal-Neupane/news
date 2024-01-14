@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 
 export const GET = async (
   req: Request,
-  { params }: { params: { email: string } }
+  { params }: { params: { id: string } }
 ) => {
   try {
-    const email = params.email;
+    const id = params.id;
     const posts = await prisma.user.findMany({
-      where: { email },
+      where: { id },
       include: {
         posts: { orderBy: { createdAt: "desc" } },
       },
