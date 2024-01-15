@@ -4,6 +4,8 @@ import React from "react";
 import { RiLinksFill } from "react-icons/ri";
 import { CiEdit } from "react-icons/ci";
 import DeleteButton from "./DeleteButton";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 interface PostProps {
   id: number;
   author: string;
@@ -15,7 +17,7 @@ interface PostProps {
   category?: string;
 }
 
-const Post = ({
+const Post = async ({
   id,
   author,
   published,
@@ -25,7 +27,9 @@ const Post = ({
   links,
   category,
 }: PostProps) => {
-  const loggedIn = true;
+  const session = await getServerSession(authOptions);
+
+  const loggedIn = session && session?.user?.name === author;
   return (
     <div className=" border-b-2 pb-4 border-black ">
       <div>
@@ -77,7 +81,7 @@ const Post = ({
           >
             Edit
           </Link>
-          <DeleteButton />
+          <DeleteButton postId={id} />
         </div>
       )}
     </div>

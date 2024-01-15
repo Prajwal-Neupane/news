@@ -3,13 +3,41 @@ import Post from "@/components/Post";
 import Image from "next/image";
 import { postData } from "@/postData";
 
-export default function Home() {
+interface PostType {
+  id: number;
+  author: string;
+  title: string;
+  content: string;
+  imageUrl: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+  links: string[];
+}
+
+const getAllPosts = async () => {
+  try {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts`, {
+      cache: "no-cache",
+    });
+    if (res.ok) {
+      const posts = await res.json();
+
+      return posts;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default async function Home() {
+  const posts = await getAllPosts();
   return (
     <div>
       <Categories />
       <div className="mt-8 flex flex-col flex-wrap gap-6">
-        {postData && postData.length > 0 ? (
-          postData.map((post) => (
+        {posts && posts.length > 0 ? (
+          posts.map((post: PostType) => (
             <Post
               category={post.category}
               links={post.links}
@@ -17,8 +45,8 @@ export default function Home() {
               author={post.author}
               title={post.title}
               content={post.content}
-              published={post.published}
-              thumbnail={post.thumbnail}
+              published={post.createdAt}
+              thumbnail={post.imageUrl}
               key={post.id}
             />
           ))
