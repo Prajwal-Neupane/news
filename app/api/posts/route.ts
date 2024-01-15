@@ -1,11 +1,17 @@
 import prisma from "@/prisma/client";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export const POST = async (req: Request) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
+  }
   try {
     const { title, content, links, categories, imageUrl, publicId } =
       await req.json();
-    const authorEmail = "author1@gmail.com";
+    const authorEmail = session?.user?.email as string;
     if (!title || !content) {
       return NextResponse.json(
         { message: "Fields are required" },

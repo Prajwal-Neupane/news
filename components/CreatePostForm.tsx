@@ -1,13 +1,54 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { RiLinksFill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
+import { useRouter } from "next/navigation";
+interface CategoriesType {
+  id: string;
+  catName: string;
+}
 
 const CreatePostForm = () => {
+  const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState<CategoriesType[]>([]);
+  const [imageUrl, setImageUrl] = useState("");
+  const [publicId, setPublicId] = useState("");
   const [links, setLinks] = useState<string[]>([]);
   const [linkInput, setLinkInput] = useState("");
+
+  useEffect(() => {
+    const fetchAllCategories = async () => {
+      const res = await fetch("api/categories");
+      const catName = await res.json();
+      setCategories(catName);
+    };
+    fetchAllCategories();
+  }, []);
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCategory(e.target.value);
+  };
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageUrl(e.target.value);
+  };
+
+  const handlePublicIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPublicId(e.target.value);
+  };
+
   const handleLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     if (linkInput.trim() !== "") {
@@ -23,28 +64,42 @@ const CreatePostForm = () => {
     updatedLinks.splice(id, 1);
     setLinks(updatedLinks);
   };
-  const categoriesList = [
-    {
-      id: 1,
-      name: "technology",
-    },
-    {
-      id: 2,
-      name: "travel",
-    },
-    {
-      id: 3,
-      name: "foods",
-    },
-    {
-      id: 4,
-      name: "entertainment",
-    },
-  ];
 
-  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+  // const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   console.log(data);
+  // };
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // console.log({
+    //   title,
+    //   content,
+    //   selectedCategory,
+    //   imageUrl,
+    //   publicId,
+    //   links,
+    // });
+    try {
+      const res = await fetch("api/posts", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          links,
+          categories: selectedCategory,
+          imageUrl,
+          publicId,
+        }),
+      });
+      if (res.ok) {
+        router.push("/dashboard");
+      }
+    } catch (error) {}
   };
+
   return (
     <div>
       <form className="w-full flex flex-col gap-6 mt-8" onSubmit={handleSubmit}>
@@ -55,6 +110,8 @@ const CreatePostForm = () => {
           required
           className="w-full outline-none px-3 py-4 rounded-md text-xl border border-slate-400"
           placeholder="Title"
+          value={title}
+          onChange={handleTitleChange}
         />{" "}
         <textarea
           className="w-full px-3 outline-none py-4 rounded-md text-xl border border-slate-400"
@@ -63,7 +120,9 @@ const CreatePostForm = () => {
           cols={30}
           rows={10}
           placeholder="Content"
+          onChange={handleContentChange}
           required
+          value={content}
         />
         <div className="flex flex-col gap-0">
           {links && links.length > 0
@@ -92,6 +151,7 @@ const CreatePostForm = () => {
         <div className="w-full flex gap-6 ">
           <input
             onChange={handleLinkChange}
+            name="links"
             value={linkInput}
             type="text"
             placeholder="Links"
@@ -104,13 +164,19 @@ const CreatePostForm = () => {
             <IoMdAdd size={30} /> Add
           </button>
         </div>
-        <select className="w-[50%] px-3 py-3 bg-[#DCF2F1] ">
+        <select
+          // onChange={handleChange}
+          className="w-[50%] px-3 py-3 bg-[#DCF2F1] "
+          onChange={handleCategoryChange}
+          value={selectedCategory}
+        >
           <option value="">Select a category</option>
-          {categoriesList.map((category) => (
-            <option value={category.name} key={category.id}>
-              {category.name}
-            </option>
-          ))}
+          {categories &&
+            categories.map((category) => (
+              <option value={category.catName} key={category.id}>
+                {category.catName}
+              </option>
+            ))}
         </select>
         <button className="bg-[#11235A] rounded-md text-white px-3 py-3 text-xl mt-4">
           Create Post
