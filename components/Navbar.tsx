@@ -7,8 +7,10 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { IoAddCircle } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const router = useRouter();
   const popUpRef = useRef<HTMLDivElement | null>(null);
   const { status, data: session } = useSession();
   const [popUp, setPopUp] = useState<boolean>(false);
@@ -29,7 +31,7 @@ const Navbar = () => {
   return (
     <div className="flex justify-between border-b pb-4 mb-4 relative">
       <div className="flex flex-col gap-4">
-        <Link href={"/"}>
+        <Link onClick={() => router.refresh()} href={"/"}>
           {" "}
           <h1 className="md:text-5xl text-4xl tracking-tighter text-dark font-bold">
             Tech News

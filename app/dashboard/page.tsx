@@ -4,6 +4,8 @@ import Post from "@/components/Post";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import DeleteButton from "@/components/DeleteButton";
 interface PostType {
   id: string;
   author: string;
@@ -18,7 +20,7 @@ interface PostType {
 
 const getPosts = async (name: string) => {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/authors/${name}`, {
-    cache: "no-cache",
+    cache: "reload",
   });
   // const response = await res.json();
   // const posts = response[0].posts;
@@ -46,17 +48,19 @@ const Dashboard = async () => {
       <div className="mt-8 flex flex-col flex-wrap gap-6">
         {posts && posts.length > 0 ? (
           posts.map((post: PostType) => (
-            <Post
-              category={post.category}
-              links={post.links}
-              id={post.id}
-              author={post.author}
-              title={post.title}
-              content={post.content}
-              published={post.createdAt}
-              thumbnail={post.imageUrl}
-              key={post.id}
-            />
+            <div key={post.id}>
+              <Post
+                category={post.category}
+                links={post.links}
+                id={post.id}
+                author={name ? name : ""}
+                title={post.title}
+                content={post.content}
+                published={post.createdAt}
+                thumbnail={post.imageUrl}
+                key={post.id}
+              />
+            </div>
           ))
         ) : (
           <div>

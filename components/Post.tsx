@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+
 import { RiLinksFill } from "react-icons/ri";
 import { CiEdit } from "react-icons/ci";
 import DeleteButton from "./DeleteButton";
@@ -37,6 +37,7 @@ const Post = async ({
   const formattedDate = dateObject.toLocaleString("en-US", options);
 
   const loggedIn = session && session?.user?.name === author;
+
   return (
     <div className=" border-b-2 pb-4 border-black ">
       <div>

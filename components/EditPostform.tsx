@@ -1,18 +1,23 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
-import { RiLinksFill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
-import { useRouter } from "next/navigation";
+import { RiLinksFill } from "react-icons/ri";
+
+interface PostProps {
+  postId: string;
+}
 interface CategoriesType {
   id: string;
   catName: string;
 }
 
-const CreatePostForm = () => {
+const EditPostform = ({ postId }: PostProps) => {
   const router = useRouter();
   const [title, setTitle] = useState("");
+  const [id, setId] = useState("");
   const [content, setContent] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState<CategoriesType[]>([]);
@@ -22,8 +27,25 @@ const CreatePostForm = () => {
   const [linkInput, setLinkInput] = useState("");
 
   useEffect(() => {
+    const fetchEditData = async () => {
+      const response = await fetch(
+        `http://localhost:3000/api/posts/${postId}`,
+        { cache: "no-store" }
+      );
+      const res = await response.json();
+      setTitle(res?.title);
+      setContent(res?.content);
+      setSelectedCategory(res?.catName);
+      setLinks(res?.links);
+      setImageUrl(res?.imageUrl);
+      setId(res?.id);
+    };
+    fetchEditData();
+  }, [postId]);
+
+  useEffect(() => {
     const fetchAllCategories = async () => {
-      const res = await fetch("api/categories");
+      const res = await fetch("http://localhost:3000/api/categories");
       const catName = await res.json();
       setCategories(catName);
     };
@@ -65,23 +87,11 @@ const CreatePostForm = () => {
     setLinks(updatedLinks);
   };
 
-  // const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log(data);
-  // };
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // console.log({
-    //   title,
-    //   content,
-    //   selectedCategory,
-    //   imageUrl,
-    //   publicId,
-    //   links,
-    // });
     try {
-      const res = await fetch("api/posts", {
-        method: "POST",
+      const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
+        method: "PUT",
         headers: {
           "Content-type": "application/json",
         },
@@ -94,13 +104,15 @@ const CreatePostForm = () => {
           publicId,
         }),
       });
+
       if (res.ok) {
         router.push("/dashboard");
         router.refresh();
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
-
   return (
     <div>
       <form className="w-full flex flex-col gap-6 mt-8" onSubmit={handleSubmit}>
@@ -180,11 +192,11 @@ const CreatePostForm = () => {
             ))}
         </select>
         <button className="bg-[#11235A] rounded-md text-white px-3 py-3 text-xl mt-4">
-          Create Post
+          Edit Post
         </button>
       </form>
     </div>
   );
 };
 
-export default CreatePostForm;
+export default EditPostform;

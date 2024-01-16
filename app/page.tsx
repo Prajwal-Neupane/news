@@ -2,6 +2,8 @@ import Categories from "@/components/Categories";
 import Post from "@/components/Post";
 import Image from "next/image";
 import { postData } from "@/postData";
+import Link from "next/link";
+import DeleteButton from "@/components/DeleteButton";
 
 interface PostType {
   id: string;
@@ -38,17 +40,18 @@ export default async function Home() {
       <div className="mt-8 flex flex-col flex-wrap gap-6">
         {posts && posts.length > 0 ? (
           posts.map((post: PostType) => (
-            <Post
-              category={post.category}
-              links={post.links}
-              id={post.id}
-              author={post.author}
-              title={post.title}
-              content={post.content}
-              published={post.createdAt}
-              thumbnail={post.imageUrl}
-              key={post.id}
-            />
+            <div key={post.id}>
+              <Post
+                category={post.category}
+                links={post.links}
+                id={post.id}
+                author={post.author}
+                title={post.title}
+                content={post.content}
+                published={post.createdAt}
+                thumbnail={post.imageUrl}
+              />
+            </div>
           ))
         ) : (
           <div> No Data Available</div>
