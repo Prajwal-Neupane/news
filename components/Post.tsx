@@ -7,7 +7,7 @@ import DeleteButton from "./DeleteButton";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 interface PostProps {
-  id: number;
+  id: string;
   author: string;
   published: string;
   title: string;
@@ -28,6 +28,13 @@ const Post = async ({
   category,
 }: PostProps) => {
   const session = await getServerSession(authOptions);
+  const dateObject = new Date(published);
+  const options: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  };
+  const formattedDate = dateObject.toLocaleString("en-US", options);
 
   const loggedIn = session && session?.user?.name === author;
   return (
@@ -35,7 +42,7 @@ const Post = async ({
       <div>
         <p className="text-xl">
           Posted by: <span className="font-bold">{author}</span> on{" "}
-          <span className="font-semibold">{published}</span>
+          <span className="font-semibold">{formattedDate}</span>
         </p>
       </div>
       <div className="w-full h-80 relative">

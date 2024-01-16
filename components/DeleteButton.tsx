@@ -1,23 +1,21 @@
 "use client";
 import React from "react";
 interface DeleteProps {
-  postId: number;
+  postId: string;
 }
-// const deleteSinglePost = async (postId: number) => {
-//   const res = await fetch(`${process.env.NEXTAUTH_URL}/posts/${postId}`);
-//   if (res.ok) {
-//     const response = await res.json();
-//     console.log(response);
-//   }
-// };
-const handleDelete = async (postId: number) => {
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/posts/${postId}`,
-    { method: "DELETE" }
-  );
+
+const handleDelete = async (postId: string) => {
+  // console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
+  // const apiEndpoint = `${process.env.NEXTAUTH_URL}/api/posts/${postId}`;
+  // console.log("API Endpoint:", apiEndpoint);
+
+  const response = await fetch(`/api/posts/${postId}`, {
+    cache: "reload",
+    method: "DELETE",
+  });
   if (response.ok) {
     const res = await response.json();
-    console.log(res);
+
     return res;
   }
 };

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { postData } from "@/postData";
 
 interface PostType {
-  id: number;
+  id: string;
   author: string;
   title: string;
   content: string;
