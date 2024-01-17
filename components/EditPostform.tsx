@@ -1,7 +1,10 @@
 "use client";
+import { CldUploadButton, CldUploadWidgetResults } from "next-cloudinary";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { FaRegImage } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { RiLinksFill } from "react-icons/ri";
@@ -39,6 +42,8 @@ const EditPostform = ({ postId }: PostProps) => {
       setLinks(res?.links);
       setImageUrl(res?.imageUrl);
       setId(res?.id);
+      setImageUrl(res?.imageUrl);
+      setPublicId(res?.publicId);
     };
     fetchEditData();
   }, [postId]);
@@ -85,6 +90,35 @@ const EditPostform = ({ postId }: PostProps) => {
     const updatedLinks = [...links];
     updatedLinks.splice(id, 1);
     setLinks(updatedLinks);
+  };
+  const handleImageUpload = (result: CldUploadWidgetResults) => {
+    const info = result.info as object;
+    if ("secure_url" in info && "public_id" in info) {
+      const url = info.secure_url as string;
+      const public_id = info.public_id as string;
+      setImageUrl(url);
+      setPublicId(public_id);
+      console.log("url", url);
+      console.log("public_id", public_id);
+    }
+  };
+  const handleRemoveImage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:3000/api/removeImage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ publicId }),
+      });
+      if (res.ok) {
+        setImageUrl("");
+        setPublicId("");
+      }
+    } catch (error) {
+      console.log("Image Upload Error", error);
+    }
   };
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -137,6 +171,31 @@ const EditPostform = ({ postId }: PostProps) => {
           required
           value={content}
         />
+        <CldUploadButton
+          uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+          className={`relative ${imageUrl && "pointer-events-none"}`}
+          onUpload={handleImageUpload}
+        >
+          <div className="bg-red-400 flex items-center justify-center h-44 rounded-md">
+            <FaRegImage size={30} />
+          </div>
+          {imageUrl && (
+            <Image
+              src={imageUrl}
+              fill
+              alt="thumbnail"
+              className="absolute object-cover inset-0"
+            />
+          )}
+        </CldUploadButton>
+        {publicId && (
+          <button
+            onClick={handleRemoveImage}
+            className=" w-[20%] px-3 py-2 rounded-md text-white font-bold mt-0 bg-red-800"
+          >
+            Remove Image
+          </button>
+        )}
         <div className="flex flex-col gap-0">
           {links && links.length > 0
             ? links.map((link, index) => (

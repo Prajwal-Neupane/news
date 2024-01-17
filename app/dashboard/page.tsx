@@ -20,7 +20,7 @@ interface PostType {
 
 const getPosts = async (name: string) => {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/authors/${name}`, {
-    cache: "reload",
+    cache: "no-store",
   });
   // const response = await res.json();
   // const posts = response[0].posts;
