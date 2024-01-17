@@ -1,4 +1,5 @@
-// @ts-nocheck
+// app/api/auth/[...nextauth]/route.ts
+
 import NextAuth, { AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -23,4 +24,4 @@ export const authOptions: AuthOptions = {
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+export default handler;
