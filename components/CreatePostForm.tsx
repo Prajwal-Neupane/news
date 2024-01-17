@@ -1,3 +1,4 @@
+// Importing necessary modules and components
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -9,12 +10,16 @@ import { CldUploadButton, CldUploadWidgetResults } from "next-cloudinary";
 import { FaRegImage } from "react-icons/fa6";
 import Image from "next/image";
 import toast from "react-hot-toast";
+
+// Defining the type for categories
 interface CategoriesType {
   id: string;
   catName: string;
 }
 
+// CreatePostForm component
 const CreatePostForm = () => {
+  // Initializing state variables
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -25,6 +30,7 @@ const CreatePostForm = () => {
   const [links, setLinks] = useState<string[]>([]);
   const [linkInput, setLinkInput] = useState("");
 
+  // Fetching categories when the component mounts
   useEffect(() => {
     const fetchAllCategories = async () => {
       const res = await fetch("api/categories");
@@ -34,6 +40,7 @@ const CreatePostForm = () => {
     fetchAllCategories();
   }, []);
 
+  // Event handlers for form input changes
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
@@ -45,13 +52,6 @@ const CreatePostForm = () => {
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCategory(e.target.value);
   };
-  // const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setImageUrl(e.target.value);
-  // };
-
-  // const handlePublicIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setPublicId(e.target.value);
-  // };
 
   const handleLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -60,15 +60,18 @@ const CreatePostForm = () => {
       setLinkInput("");
     }
   };
+
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLinkInput(e.target.value);
   };
+
   const handleLinkDelete = (id: number) => {
     const updatedLinks = [...links];
     updatedLinks.splice(id, 1);
     setLinks(updatedLinks);
   };
 
+  // Handling image upload
   const handleImageUpload = (result: CldUploadWidgetResults) => {
     const info = result.info as object;
     if ("secure_url" in info && "public_id" in info) {
@@ -80,6 +83,8 @@ const CreatePostForm = () => {
       console.log("public_id", public_id);
     }
   };
+
+  // Handling removal of uploaded image
   const handleRemoveImage = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -99,20 +104,10 @@ const CreatePostForm = () => {
     }
   };
 
-  // const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log(data);
-  // };
+  // Handling form submission
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // console.log({
-    //   title,
-    //   content,
-    //   selectedCategory,
-    //   imageUrl,
-    //   publicId,
-    //   links,
-    // });
+
     if (!title || !content) {
       const errorMessage = "Title and content are required";
       toast.error(errorMessage);
@@ -138,34 +133,37 @@ const CreatePostForm = () => {
         const successMessage = "Post created successfully";
         toast.success(successMessage);
         router.push("/dashboard");
-
         router.refresh();
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
   };
 
   return (
     <div>
+      {/* Form for creating a new post */}
       <form className="w-full flex flex-col gap-6 mt-8" onSubmit={handleSubmit}>
+        {/* Input field for title */}
         <input
           type="text"
           name="title"
-          id=""
           className="w-full outline-none px-3 py-4 rounded-md text-xl border border-slate-400"
           placeholder="Title"
           value={title}
           onChange={handleTitleChange}
-        />{" "}
+        />
+        {/* Textarea for content */}
         <textarea
           className="w-full px-3 outline-none py-4 rounded-md text-xl border border-slate-400"
           name="content"
-          id=""
           cols={30}
           rows={7}
           placeholder="Content"
           onChange={handleContentChange}
           value={content}
         />
+        {/* Cloudinary upload button for image */}
         <CldUploadButton
           uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
           className={`relative ${imageUrl && "pointer-events-none"}`}
@@ -183,33 +181,35 @@ const CreatePostForm = () => {
             />
           )}
         </CldUploadButton>
+        {/* Button to remove uploaded image */}
         {publicId && (
           <button
             onClick={handleRemoveImage}
-            className=" w-[20%] px-3 py-2 rounded-md text-white font-bold mt-0 bg-red-800"
+            className="w-[20%] px-3 py-2 rounded-md text-white font-bold mt-0 bg-red-800"
           >
             Remove Image
           </button>
         )}
+        {/* Displaying links */}
         <div className="flex flex-col gap-0">
           {links && links.length > 0
             ? links.map((link, index) => (
                 <div
-                  className="flex items-center gap-1 mt-3 md:text-xl "
+                  className="flex items-center gap-1 mt-3 md:text-xl"
                   key={index}
                 >
-                  <RiLinksFill className="text-dark font-semibold hover:underline hover:cursor-pointer hover:scale-y-105 transition-all " />{" "}
+                  <RiLinksFill className="text-dark font-semibold hover:underline hover:cursor-pointer hover:scale-y-105 transition-all" />
                   <Link
                     href={link}
-                    className="text-dark font-semibold hover:underline hover:cursor-pointer hover:scale-y-105 transition-all max-w-full overflow-hidden text-ellipsis "
+                    className="text-dark font-semibold hover:underline hover:cursor-pointer hover:scale-y-105 max-w-full overflow-hidden text-ellipsis"
                   >
                     {link}
                   </Link>
                   <MdDelete
                     onClick={() => handleLinkDelete(index)}
-                    color="red "
+                    color="red"
                     size={25}
-                    className="text-dark text-right font-semibold hover:underline hover:cursor-pointer hover:scale-y-105 transition-all  ml-6"
+                    className="text-dark text-right font-semibold hover:underline hover:cursor-pointer hover:scale-y-105 ml-6"
                   />
                 </div>
               ))

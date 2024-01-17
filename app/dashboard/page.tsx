@@ -1,11 +1,9 @@
 import React from "react";
-// import { postData } from "@/postData";
 import Post from "@/components/Post";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import DeleteButton from "@/components/DeleteButton";
+
 interface PostType {
   id: string;
   author: string;
@@ -19,25 +17,36 @@ interface PostType {
 }
 
 const getPosts = async (name: string) => {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/authors/${name}`, {
-    cache: "no-store",
-  });
-  // const response = await res.json();
-  // const posts = response[0].posts;
-  // console.log(posts)
-  const [author] = await res.json();
-  const { posts } = author;
-  return posts;
+  try {
+    // Fetch the author's posts from the server
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/authors/${name}`, {
+      cache: "no-store",
+    });
+
+    // Extract the posts from the response
+    const [author] = await res.json();
+    const { posts } = author;
+
+    return posts;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return [];
+  }
 };
 
 const Dashboard = async () => {
-  let posts = [];
+  let posts: PostType[] = [];
+
+  // Get the user's session
   const session = await getServerSession(authOptions);
   const name = session?.user?.name;
 
+  // Redirect to login if the user is not authenticated
   if (!session) {
     redirect("/login");
   }
+
+  // Fetch posts for the authenticated user
   if (name) {
     posts = await getPosts(name);
   }
@@ -47,6 +56,7 @@ const Dashboard = async () => {
       <h1 className="text-center font-bold text-2xl">My Posts</h1>
       <div className="mt-8 flex flex-col flex-wrap gap-6">
         {posts && posts.length > 0 ? (
+          // Render each post using the Post component
           posts.map((post: PostType) => (
             <div key={post.id}>
               <Post

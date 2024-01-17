@@ -1,3 +1,4 @@
+// Importing necessary modules and components
 "use client";
 import { CldUploadButton, CldUploadWidgetResults } from "next-cloudinary";
 import Image from "next/image";
@@ -10,15 +11,20 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { RiLinksFill } from "react-icons/ri";
 
+// Defining the type for post props
 interface PostProps {
   postId: string;
 }
+
+// Defining the type for categories
 interface CategoriesType {
   id: string;
   catName: string;
 }
 
+// EditPostform component
 const EditPostform = ({ postId }: PostProps) => {
+  // Initializing state variables
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [id, setId] = useState("");
@@ -30,12 +36,12 @@ const EditPostform = ({ postId }: PostProps) => {
   const [links, setLinks] = useState<string[]>([]);
   const [linkInput, setLinkInput] = useState("");
 
+  // Fetching data for editing the post when the component mounts
   useEffect(() => {
     const fetchEditData = async () => {
-      const response = await fetch(
-        `http://localhost:3000/api/posts/${postId}`,
-        { cache: "no-store" }
-      );
+      const response = await fetch(`/api/posts/${postId}`, {
+        cache: "no-store",
+      });
       const res = await response.json();
       setTitle(res?.title);
       setContent(res?.content);
@@ -49,6 +55,7 @@ const EditPostform = ({ postId }: PostProps) => {
     fetchEditData();
   }, [postId]);
 
+  // Fetching all categories when the component mounts
   useEffect(() => {
     const fetchAllCategories = async () => {
       const res = await fetch("http://localhost:3000/api/categories");
@@ -58,6 +65,7 @@ const EditPostform = ({ postId }: PostProps) => {
     fetchAllCategories();
   }, []);
 
+  // Event handlers for form input changes
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
@@ -77,14 +85,18 @@ const EditPostform = ({ postId }: PostProps) => {
       setLinkInput("");
     }
   };
+
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLinkInput(e.target.value);
   };
+
   const handleLinkDelete = (id: number) => {
     const updatedLinks = [...links];
     updatedLinks.splice(id, 1);
     setLinks(updatedLinks);
   };
+
+  // Handling image upload
   const handleImageUpload = (result: CldUploadWidgetResults) => {
     const info = result.info as object;
     if ("secure_url" in info && "public_id" in info) {
@@ -96,6 +108,8 @@ const EditPostform = ({ postId }: PostProps) => {
       console.log("public_id", public_id);
     }
   };
+
+  // Handling removal of uploaded image
   const handleRemoveImage = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -115,13 +129,16 @@ const EditPostform = ({ postId }: PostProps) => {
     }
   };
 
+  // Handling form submission
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (!title || !content) {
       const errorMessage = "Title and content are required";
       toast.error(errorMessage);
       return;
     }
+
     try {
       const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
         method: "PUT",

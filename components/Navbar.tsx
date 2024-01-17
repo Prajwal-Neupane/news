@@ -2,9 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
+
 import Image from "next/image";
 import { IoAddCircle } from "react-icons/io5";
 import { useRouter } from "next/navigation";

@@ -6,12 +6,12 @@ interface Category {
   catName: string;
 }
 
+// Function to fetch categories from the API
 const getCategories = async () => {
   try {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/categories`);
     if (res.ok) {
       const categories = await res.json();
-      // console.log(categories);
       return categories;
     }
   } catch (error) {
@@ -19,40 +19,24 @@ const getCategories = async () => {
   }
 };
 
+// Component to display categories
 const Categories = async () => {
+  // Fetching categories using the getCategories function
   const categories = await getCategories();
-  // const categoriesList = [
-  //   {
-  //     id: 1,
-  //     name: "technology",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "travel",
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "foods",
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "entertainment",
-  //   },
-  // ];
+
   return (
-    // flex gap-7 flex-wrap
-    <div className="grid  lg:grid-cols-4 md:grid-cols-3 grid-cols-2  gap-8">
-      {categories.map((category: Category) => {
-        return (
-          <Link
-            className="btn md:text-xl "
-            href={`/categories/${category.catName}`}
-            key={category.id}
-          >
-            {category.catName}
-          </Link>
-        );
-      })}
+    // Grid layout for displaying categories
+    <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-8">
+      {/* Mapping through categories and creating links */}
+      {categories.map((category: Category) => (
+        <Link
+          className="btn md:text-xl"
+          href={`/categories/${category.catName}`}
+          key={category.id}
+        >
+          {category.catName}
+        </Link>
+      ))}
     </div>
   );
 };
