@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaRegImage } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -68,13 +69,6 @@ const EditPostform = ({ postId }: PostProps) => {
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCategory(e.target.value);
   };
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUrl(e.target.value);
-  };
-
-  const handlePublicIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPublicId(e.target.value);
-  };
 
   const handleLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -123,6 +117,11 @@ const EditPostform = ({ postId }: PostProps) => {
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!title || !content) {
+      const errorMessage = "Title and content are required";
+      toast.error(errorMessage);
+      return;
+    }
     try {
       const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
         method: "PUT",
@@ -140,6 +139,8 @@ const EditPostform = ({ postId }: PostProps) => {
       });
 
       if (res.ok) {
+        const successMessage = "Post edited successfully";
+        toast.success(successMessage);
         router.push("/dashboard");
         router.refresh();
       }
@@ -154,7 +155,6 @@ const EditPostform = ({ postId }: PostProps) => {
           type="text"
           name="title"
           id=""
-          required
           className="w-full outline-none px-3 py-4 rounded-md text-xl border border-slate-400"
           placeholder="Title"
           value={title}
@@ -168,7 +168,6 @@ const EditPostform = ({ postId }: PostProps) => {
           rows={10}
           placeholder="Content"
           onChange={handleContentChange}
-          required
           value={content}
         />
         <CldUploadButton

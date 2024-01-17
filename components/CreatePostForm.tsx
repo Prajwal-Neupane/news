@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { CldUploadButton, CldUploadWidgetResults } from "next-cloudinary";
 import { FaRegImage } from "react-icons/fa6";
 import Image from "next/image";
+import toast from "react-hot-toast";
 interface CategoriesType {
   id: string;
   catName: string;
@@ -112,6 +113,11 @@ const CreatePostForm = () => {
     //   publicId,
     //   links,
     // });
+    if (!title || !content) {
+      const errorMessage = "Title and content are required";
+      toast.error(errorMessage);
+      return;
+    }
 
     try {
       const res = await fetch("api/posts", {
@@ -129,7 +135,10 @@ const CreatePostForm = () => {
         }),
       });
       if (res.ok) {
+        const successMessage = "Post created successfully";
+        toast.success(successMessage);
         router.push("/dashboard");
+
         router.refresh();
       }
     } catch (error) {}
@@ -142,7 +151,6 @@ const CreatePostForm = () => {
           type="text"
           name="title"
           id=""
-          required
           className="w-full outline-none px-3 py-4 rounded-md text-xl border border-slate-400"
           placeholder="Title"
           value={title}
@@ -156,7 +164,6 @@ const CreatePostForm = () => {
           rows={7}
           placeholder="Content"
           onChange={handleContentChange}
-          required
           value={content}
         />
         <CldUploadButton

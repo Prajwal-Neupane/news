@@ -1,10 +1,20 @@
 "use client";
 import React from "react";
+import toast from "react-hot-toast";
 interface DeleteProps {
   postId: string;
 }
 
 const handleDelete = async (postId: string) => {
+  const deleteImage = async (publicId: string) => {
+    const res = await fetch("/api/removeImage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ publicId }),
+    });
+  };
   // console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
   // const apiEndpoint = `${process.env.NEXTAUTH_URL}/api/posts/${postId}`;
   // console.log("API Endpoint:", apiEndpoint);
@@ -14,9 +24,10 @@ const handleDelete = async (postId: string) => {
     method: "DELETE",
   });
   if (response.ok) {
-    const res = await response.json();
-
-    return res;
+    const post = await response.json();
+    const { publicId } = post;
+    await deleteImage(publicId);
+    toast.success("Post deleted successfully");
   }
 };
 
